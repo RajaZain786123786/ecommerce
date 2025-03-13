@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperTools - 20 Essential Online Utilities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            line-height: 1.6;
+            color: var(--dark);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: -3rem auto 3rem;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .tool-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .tool-card h3 {
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        .tool-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .tool-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tool-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+        }
+         .header {
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #9333ea 100%);
+        color: white;
+        padding: 6rem 2rem 8rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+        pointer-events: none;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header h1 {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .header p {
+        font-size: 1.4rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.8;
+    }
+
+    .header-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .header-btn {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,255,255,0.2);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .header-btn:hover {
+        background: rgba(255,255,255,0.25);
+        transform: translateY(-2px);
+    }
+
+    .header-btn i {
+        font-size: 1.3rem;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    /* Animated Background Elements */
+    .header-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        animation: drift linear infinite;
+    }
+
+    .shape:nth-child(1) {
+        width: 150px;
+        height: 150px;
+        top: 20%;
+        left: 10%;
+        animation-duration: 25s;
+    }
+
+    .shape:nth-child(2) {
+        width: 200px;
+        height: 200px;
+        top: 60%;
+        right: 15%;
+        animation-duration: 30s;
+    }
+
+    .shape:nth-child(3) {
+        width: 100px;
+        height: 100px;
+        top: 40%;
+        left: 30%;
+        animation-duration: 20s;
+    }
+
+    @keyframes drift {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        100% { transform: translate(300px, 300px) rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 2.5rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+        }
+        
+        .header-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
+    }
+    .category-filter {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: var(--light);
+    color: var(--dark);
+    border: 2px solid var(--primary);
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.tool-icon {
+    animation: float 3s ease-in-out infinite;
+}
+    </style>
+</head>
+<body>
+    <div class="header">
+    <div class="header-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="header-content">
+        <h1>Transform Your Workflow<br>With Smart Tools</h1>
+        <p>Access 20+ premium utilities designed to boost your productivity and enhance your digital experience</p>
+        
+        <div class="header-buttons">
+            <button class="header-btn">
+                <i class="fas fa-rocket"></i>
+                Get Started
+            </button>
+            <button class="header-btn">
+                <i class="fas fa-video"></i>
+                Watch Demo
+            </button>
+        </div>
+    </div>
+</div>
+
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="🔍 Search for tools...">
+    </div>
+
+    <div class="tools-grid" id="toolsContainer">
+        <!-- Tools will be dynamically generated -->
+    </div>
+
+    <div class="footer">
+        <p>© 2025 SuperTools. All rights reserved. | Crafted with ❤️ for digital creators</p>
+    </div>
+    
+
+    <div class="scroll-top" id="scrollTop">↑</div>
+    <script>
+       const tools = [
+            {name: "Barcode Generator", icon: "fa-barcode", category: "generator", link: "barcode-generator.html"},
+            {name: "Background Remover", icon: "fa-image", category: "image", link: "background-remover.html"},
+            {name: "Dynamic Canvas Tool", icon: "fa-paint-brush", category: "design", link: "dynamic-canvas-tool.html"},
+            {name: "Hashtag Generator", icon: "fa-hashtag", category: "social", link: "hashtag-generator.html"},
+            {name: "Image Compressor", icon: "fa-file-image", category: "image", link: "image-compressor.html"},
+            {name: "Image Cropper", icon: "fa-crop", category: "image", link: "image-cropper.html"},
+            {name: "Image Resizer", icon: "fa-expand", category: "image", link: "image-resizer.html"},
+            {name: "Image to JPG", icon: "fa-file-image", category: "converter", link: "image-to-jpg.html"},
+            {name: "Image to PNG", icon: "fa-file-image", category: "converter", link: "image-to-png.html"},
+            {name: "JSON Formatter", icon: "fa-code", category: "developer", link: "json-formatter.html"},
+            {name: "Meta Tag Generator", icon: "fa-tags", category: "seo", link: "meta-tag-generator.html"},
+            {name: "Negative Marking Calculator", icon: "fa-calculator", category: "education", link: "negative-marking-calculator.html"},
+            {name: "PDF to CSV Converter", icon: "fa-file-csv", category: "converter", link: "pdf-to-csv-converter.html"},
+            {name: "Percentage Calculator", icon: "fa-percentage", category: "math", link: "percentage-calculator.html"},
+            {name: "QR Code Generator", icon: "fa-qrcode", category: "generator", link: "qrcode-generator.html"},
+            {name: "Screenshot Text Extractor", icon: "fa-text-width", category: "text", link: "screenshot-text-extractor.html"},
+            {name: "Text Case Converter", icon: "fa-font", category: "text", link: "text-case-converter.html"},
+            {name: "Word Counter", icon: "fa-sort-numeric-up", category: "text", link: "word-counter.html"},
+            {name: "YouTube Tags Extractor", icon: "fa-youtube", category: "social", link: "youtube-tags-extractor.html"},
+            {name: "YouTube Thumbnail Downloader", icon: "fa-download", category: "video", link: "youtube-thumbnail-downloader.html"}
+        ];
+        const toolsContainer = document.getElementById('toolsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const scrollTopBtn = document.getElementById('scrollTop');
+
+       // Generate tool cards with icons and categories
+        function generateTools(toolsArray) {
+            toolsContainer.innerHTML = '';
+            toolsArray.forEach(tool => {
+                const toolCard = document.createElement('div');
+                toolCard.className = 'tool-card';
+                toolCard.innerHTML = `
+                    <div class="category-tag">${tool.category}</div>
+                    <i class="${tool.icon} tool-icon"></i>
+                    <h3>${tool.name}</h3>
+                    <p>${getToolDescription(tool.name)}</p>
+                    <a href="${tool.link}" class="tool-btn">
+                        Use Tool <i class="fas fa-arrow-right"></i>
+                    </a>
+                `;
+                toolsContainer.appendChild(toolCard);
+            });
+        }
+
+        // Add simple descriptions
+        function getToolDescription(toolName) {
+            const descriptions = {
+                "Barcode Generator": "Create custom barcodes in various formats",
+                "Background Remover": "Remove image backgrounds instantly",
+                "Dynamic Canvas Tool": "Advanced canvas editing with drag & resize",
+                "Hashtag Generator": "Generate trending hashtags for social media",
+                // Add more descriptions as needed
+            };
+            return descriptions[toolName] || "Powerful tool for your digital needs";
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredTools = tools.filter(tool => 
+                tool.name.toLowerCase().includes(searchTerm) ||
+                tool.category.toLowerCase().includes(searchTerm)
+            );
+            generateTools(filteredTools);
+        });
+
+        // Scroll to top button
+        window.addEventListener('scroll', () => {
+            scrollTopBtn.classList.toggle('visible', window.scrollY > 300);
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Initial load
+        generateTools(tools);
+        // Category Filters
+const categories = [...new Set(tools.map(tool => tool.category))];
+const filterContainer = document.createElement('div');
+filterContainer.className = 'category-filter';
+filterContainer.innerHTML = `
+    <button class="filter-btn active" data-category="all">All</button>
+    ${categories.map(cat => 
+        `<button class="filter-btn" data-category="${cat}">${cat}</button>`
+    ).join('')}
+`;
+document.querySelector('.search-container').after(filterContainer);
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const category = this.dataset.category;
+        const filtered = category === 'all' 
+            ? tools 
+            : tools.filter(tool => tool.category === category);
+        
+        generateTools(filtered);
+    });
+});
+
+// Add smooth scroll animation
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+    </script>
+</body>
+</html>
