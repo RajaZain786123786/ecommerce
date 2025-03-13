@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF to CSV Converter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f2f5;
+        padding: 1rem;
+      }
+
+      .container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: #1a1a1a;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .description {
+        color: #666;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .file-input-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #2563eb;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: transform 0.1s ease, background 0.2s ease;
+        margin-bottom: 1.5rem;
+      }
+
+      .file-input-label:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+      }
+
+      .file-input-label:active {
+        transform: translateY(0);
+      }
+
+      #fileInfo, #convertedFileInfo {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0.5rem 0;
+      }
+
+      #convertButton {
+        background: #16a34a;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.1s ease, background 0.2s ease;
+        margin-top: 1rem;
+        width: 100%;
+        max-width: 240px;
+      }
+
+      #convertButton:hover {
+        background: #15803d;
+        transform: translateY(-1px);
+      }
+
+      #convertButton:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      #loading {
+        display: none;
+        margin-top: 1.5rem;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        border-top-color: #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .hidden { display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>PDF to CSV Converter</h1>
+      <p class="description">
+        Convert PDF documents to CSV format while preserving text structure. 
+        Simply upload your file and download the converted CSV instantly.
+      </p>
+
+      <label for="pdfFile" class="file-input-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+          <path d="M13 2v7h7"/>
+        </svg>
+        Select PDF File
+      </label>
+      <input type="file" id="pdfFile" accept="application/pdf" class="hidden" />
+
+      <div id="fileInfo"></div>
+      <div id="convertedFileInfo"></div>
+
+      <button id="convertButton" onclick="convertPDF()" disabled>
+        Convert & Download CSV
+      </button>
+      
+      <div id="loading">
+        <div class="loading-spinner"></div>
+        <p style="margin-top: 0.5rem;">Processing PDF...</p>
+      </div>
+    </div>
+
+    <script>
+      // Improved JavaScript with better state handling
+      const pdfFile = document.getElementById('pdfFile');
+      const convertButton = document.getElementById('convertButton');
+      const loading = document.getElementById('loading');
+      const fileInfo = document.getElementById('fileInfo');
+      const convertedFileInfo = document.getElementById('convertedFileInfo');
+
+      pdfFile.addEventListener('change', handleFileSelect);
+
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+          fileInfo.textContent = `Selected File: ${file.name} • ${(file.size / 1024).toFixed(1)} KB`;
+          convertButton.disabled = false;
+        } else {
+          fileInfo.textContent = '';
+          convertButton.disabled = true;
+        }
+      }
+
+      async function convertPDF() {
+        if (!pdfFile.files.length) return;
+
+        convertButton.disabled = true;
+        loading.style.display = 'block';
+
+        try {
+          const file = pdfFile.files[0];
+          const pdfData = await readFileAsArrayBuffer(file);
+          const csvContent = await processPDF(pdfData);
+          downloadCSV(csvContent, file.name);
+          
+          convertedFileInfo.textContent = `File size: ${(csvContent.length / 1024).toFixed(1)} KB`;
+        } catch (error) {
+          console.error('Conversion error:', error);
+          alert('Error converting PDF. Please check the file format.');
+        } finally {
+          convertButton.disabled = false;
+          loading.style.display = 'none';
+        }
+      }
+
+      function readFileAsArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      async function processPDF(pdfData) {
+        const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(pdfData) }).promise;
+        let csvContent = '';
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => `"${item.str.replace(/"/g, '""')}"`).join(',');
+          csvContent += pageText + '\n';
+        }
+
+        return csvContent;
+      }
+
+      function downloadCSV(content, fileName) {
+        const blob = new Blob([content], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName.replace(/\.pdf$/i, '.csv');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    </script>
+  </body>
+</html>

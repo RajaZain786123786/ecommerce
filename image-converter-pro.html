@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter Pro</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --secondary: #6D28D9;
+            --bg: #ffffff;
+            --text: #1F2937;
+            --card-bg: #ffffff;
+            --border: #E5E7EB;
+        }
+
+        [data-theme="dark"] {
+            --primary: #8B5CF6;
+            --secondary: #7C3AED;
+            --bg: #1F2937;
+            --text: #F9FAFB;
+            --card-bg: #374151;
+            --border: #4B5563;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s, color 0.1s;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Main Container */
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        /* Converter Styles */
+        .upload-container {
+            border: 2px dashed var(--primary);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            background: var(--card-bg);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .upload-container:hover {
+            border-color: var(--secondary);
+        }
+
+        #preview {
+            max-width: 100%;
+            max-height: 300px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        select, button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        button.primary {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+
+        button.primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        #downloadLink {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #status {
+            text-align: center;
+            margin-top: 15px;
+            color: #e74c3c;
+            font-size: 14px;
+        }
+
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+        :root {
+            --primary: #7C3AED;
+            --secondary: #6D28D9;
+            --bg: #ffffff;
+            --text: #1F2937;
+            --card-bg: #ffffff;
+            --border: #E5E7EB;
+        }
+
+        [data-theme="dark"] {
+            --primary: #8B5CF6;
+            --secondary: #7C3AED;
+            --bg: #1F2937;
+            --text: #F9FAFB;
+            --card-bg: #374151;
+            --border: #4B5563;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s, color 0.1s;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Added file input styling */
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .custom-file-upload:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        /* Rest of previous CSS remains unchanged */
+        .header {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* ... (rest of original CSS remains exactly the same) ... */
+
+    </style>
+</head>
+<body>
+       <!-- Modified file input section -->
+    <div class="container">
+        <h1>Image Converter Pro</h1>
+        
+        <div class="upload-container" id="dropZone"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event)">
+            <p>Drag & Drop image or 
+                <label for="fileInput" class="custom-file-upload">Browse File</label>
+                <input type="file" id="fileInput" accept="image/*"> 
+                to Upload
+            </p>
+            <img id="preview" alt="Preview">
+        </div>
+
+        <div class="controls">
+            <select id="formatSelect">
+                <option value="jpg">JPEG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+                <option value="bmp">BMP</option>
+                <option value="tiff">TIFF</option>
+            </select>
+            <button class="primary" onclick="convertImage()">Convert Now</button>
+        </div>
+
+        <a id="downloadLink" download>Download Converted Image</a>
+        <div id="status"></div>
+    </div>
+
+    <!-- JavaScript remains untouched -->
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const formatSelect = document.getElementById('formatSelect');
+        const downloadLink = document.getElementById('downloadLink');
+        const status = document.getElementById('status');
+
+        let currentFile = null;
+
+        // Handle file selection
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                currentFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+                status.textContent = '';
+            } else {
+                status.textContent = 'Please select a valid image file.';
+            }
+        }
+
+        // Drag and drop handlers
+        function handleDragOver(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = '#667eea';
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            dropZone.style.borderColor = '#764ba2';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            handleDragLeave(e);
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        }
+
+        // File input change handler
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        // Conversion function
+        function convertImage() {
+            if (!currentFile) {
+                status.textContent = 'Please select an image first.';
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const format = formatSelect.value;
+                const mimeType = `image/${format === 'jpg' ? 'jpeg' : format}`;
+                
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    downloadLink.href = url;
+                    downloadLink.download = `converted_image.${format}`;
+                    downloadLink.style.display = 'block';
+                    status.textContent = 'Conversion complete! Click download to save your file.';
+                }, mimeType, format === 'webp' ? 0.8 : 0.9);
+            };
+
+            img.src = URL.createObjectURL(currentFile);
+        }
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.setAttribute('data-theme', 
+                body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+            );
+            themeToggle.innerHTML = body.getAttribute('data-theme') === 'dark' 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', body.getAttribute('data-theme'));
+        });
+
+        // Set initial theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+        themeToggle.innerHTML = savedTheme === 'dark' 
+            ? '<i class="fas fa-sun"></i>' 
+            : '<i class="fas fa-moon"></i>';
+
+        // Mobile Menu
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenu = document.getElementById('closeMenu');
+
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+    </script>
+
+    <!-- Include previous JavaScript code for converter here -->
+</body>
+</html>

@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-site-verification" content="lDSkGEGgqlC3Pb-D4woMotdroOSvJNNCDRzMUnDlwUI" />
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TVDE6BKBBW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TVDE6BKBBW');
+</script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Negative Marking Calculator</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.css">
+	<style>
+    	:root {
+        	--primary-color: #4CAF50;
+        	--background-color: #f5f5f5;
+        	--text-color: #333;
+    	}
+
+    	* {
+        	box-sizing: border-box;
+        	margin: 0;
+        	padding: 0;
+    	}
+
+    	body {
+        	font-family: 'Arial', sans-serif;
+        	background-color: var(--background-color);
+        	color: var(--text-color);
+        	line-height: 1.6;
+        	padding: 20px;
+    	}
+
+    	.container {
+        	max-width: 800px;
+        	margin: 0 auto;
+        	background: white;
+        	padding: 30px;
+        	border-radius: 10px;
+        	box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    	}
+
+    	h1 {
+        	text-align: center;
+        	color: var(--primary-color);
+        	margin-bottom: 30px;
+    	}
+
+    	.input-group {
+        	margin-bottom: 20px;
+    	}
+
+    	label {
+        	display: block;
+        	margin-bottom: 5px;
+        	font-weight: bold;
+    	}
+
+    	input, select {
+        	width: 100%;
+        	padding: 10px;
+        	border: 1px solid #ddd;
+        	border-radius: 5px;
+        	font-size: 16px;
+    	}
+
+    	.button-group {
+        	display: flex;
+        	gap: 10px;
+        	margin-top: 30px;
+    	}
+
+    	button {
+        	flex: 1;
+        	padding: 12px;
+        	border: none;
+        	border-radius: 5px;
+        	cursor: pointer;
+        	font-size: 16px;
+        	transition: opacity 0.3s;
+    	}
+
+    	button:hover {
+        	opacity: 0.9;
+    	}
+
+    	.calculate-btn {
+        	background-color: var(--primary-color);
+        	color: white;
+    	}
+
+    	.clear-btn {
+        	background-color: #f44336;
+        	color: white;
+    	}
+
+    	.results {
+        	margin-top: 30px;
+        	padding: 20px;
+        	border-radius: 5px;
+        	background-color: #f8f9fa;
+        	display: none;
+    	}
+
+    	.result-item {
+        	margin: 15px 0;
+        	font-size: 18px;
+    	}
+
+    	.pass {
+        	color: #4CAF50;
+        	font-weight: bold;
+    	}
+
+    	.fail {
+        	color: #f44336;
+        	font-weight: bold;
+    	}
+
+    	.error {
+        	color: #f44336;
+        	margin-top: 5px;
+        	display: none;
+    	}
+
+    	#chart-container {
+        	margin-top: 20px;
+        	max-width: 300px;
+        	margin-left: auto;
+        	margin-right: auto;
+    	}
+
+    	@media (max-width: 768px) {
+        	.container {
+            	padding: 20px;
+        	}
+       	 
+        	.button-group {
+            	flex-direction: column;
+        	}
+    	}
+	</style>
+</head>
+<body>
+	<div class="container">
+    	<h1>Negative Marking Calculator</h1>
+   	 
+    	<div class="input-group">
+        	<label for="total-questions">Total Questions</label>
+        	<input type="number" id="total-questions" min="1" required>
+    	</div>
+
+    	<div class="input-group">
+        	<label for="max-marks">Maximum Marks</label>
+        	<input type="number" id="max-marks" min="1" required>
+    	</div>
+
+    	<div class="input-group">
+        	<label for="attempted">Attempted Questions</label>
+        	<input type="number" id="attempted" min="0" required>
+        	<div class="error" id="attempted-error">Cannot exceed total questions</div>
+    	</div>
+
+    	<div class="input-group">
+        	<label for="wrong">Wrong Answers</label>
+        	<input type="number" id="wrong" min="0" required>
+        	<div class="error" id="wrong-error">Cannot exceed attempted questions</div>
+    	</div>
+
+    	<div class="input-group">
+        	<label for="negative-ratio">Negative Marking Ratio</label>
+        	<select id="negative-ratio">
+            	<option value="0.3333">1/3</option>
+            	<option value="0.25">1/4</option>
+            	<option value="0.5">1/2</option>
+            	<option value="0.1">10%</option>
+            	<option value="0">No Negative Marking</option>
+        	</select>
+    	</div>
+
+    	<div class="button-group">
+        	<button class="calculate-btn" onclick="calculateMarks()">Calculate</button>
+        	<button class="clear-btn" onclick="clearFields()">Clear</button>
+    	</div>
+
+    	<div class="results">
+        	<div class="result-item">Final Score: <span id="final-score">0</span></div>
+        	<div class="result-item">Percentage: <span id="percentage">0</span>%</div>
+        	<div class="result-item">Status: <span id="status">-</span></div>
+        	<div id="chart-container">
+            	<canvas id="results-chart"></canvas>
+        	</div>
+    	</div>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+	<script>
+    	let myChart = null;
+
+    	function validateInputs() {
+        	const totalQuestions = parseInt(document.getElementById('total-questions').value);
+        	const attempted = parseInt(document.getElementById('attempted').value);
+        	const wrong = parseInt(document.getElementById('wrong').value);
+       	 
+        	let isValid = true;
+
+        	// Reset errors
+        	document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+
+        	if (attempted > totalQuestions) {
+            	document.getElementById('attempted-error').style.display = 'block';
+            	isValid = false;
+        	}
+
+        	if (wrong > attempted) {
+            	document.getElementById('wrong-error').style.display = 'block';
+            	isValid = false;
+        	}
+
+        	return isValid;
+    	}
+
+    	function calculateMarks() {
+        	if (!validateInputs()) return;
+
+        	const totalQuestions = parseInt(document.getElementById('total-questions').value);
+        	const maxMarks = parseInt(document.getElementById('max-marks').value);
+        	const attempted = parseInt(document.getElementById('attempted').value);
+        	const wrong = parseInt(document.getElementById('wrong').value);
+        	const negativeRatio = parseFloat(document.getElementById('negative-ratio').value);
+
+        	const correct = attempted - wrong;
+        	const marksPerQuestion = maxMarks / totalQuestions;
+       	 
+        	const positiveMarks = correct * marksPerQuestion;
+        	const negativeMarks = wrong * marksPerQuestion * negativeRatio;
+        	const finalMarks = Math.max(0, positiveMarks - negativeMarks);
+        	const percentage = (finalMarks / maxMarks) * 100;
+
+        	// Update results
+        	document.getElementById('final-score').textContent = finalMarks.toFixed(2);
+        	document.getElementById('percentage').textContent = percentage.toFixed(2);
+        	document.getElementById('status').className = percentage >= 40 ? 'pass' : 'fail';
+        	document.getElementById('status').textContent = percentage >= 40 ? 'Pass' : 'Fail';
+       	 
+        	// Show results
+        	document.querySelector('.results').style.display = 'block';
+
+        	// Update chart
+        	updateChart(correct, wrong);
+    	}
+
+    	function updateChart(correct, wrong) {
+        	const ctx = document.getElementById('results-chart').getContext('2d');
+       	 
+        	if (myChart) myChart.destroy();
+
+        	myChart = new Chart(ctx, {
+            	type: 'pie',
+            	data: {
+                	labels: ['Correct Answers', 'Wrong Answers'],
+                	datasets: [{
+                    	data: [correct, wrong],
+                    	backgroundColor: ['#4CAF50', '#f44336']
+                	}]
+            	},
+            	options: {
+                	responsive: true,
+                	plugins: {
+                    	legend: { position: 'bottom' }
+                	}
+            	}
+        	});
+    	}
+
+    	function clearFields() {
+        	document.querySelectorAll('input').forEach(input => input.value = '');
+        	document.querySelector('.results').style.display = 'none';
+        	document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
+        	if (myChart) myChart.destroy();
+    	}
+
+    	// Optional: Real-time validation
+    	document.getElementById('attempted').addEventListener('input', validateInputs);
+    	document.getElementById('wrong').addEventListener('input', validateInputs);
+	</script>
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Negative Marking Calculator</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.css">
+    
+	<!-- Google Analytics Code -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXXXX-X"></script>
+	<script>
+    	window.dataLayer = window.dataLayer || [];
+    	function gtag(){dataLayer.push(arguments);}
+    	gtag('js', new Date());
+    	gtag('config', 'UA-XXXXXXXXX-X');
+	</script>
+    
+	<!-- Ad Code -->
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    
+	<style>
+    	:root {
+        	--primary-color: #4CAF50;
+        	--background-color: #f5f5f5;
+        	--text-color: #333;
+    	}
+    	* { box-sizing: border-box; margin: 0; padding: 0; }
+    	body {
+        	font-family: 'Arial', sans-serif;
+        	background-color: var(--background-color);
+        	color: var(--text-color);
+        	line-height: 1.6;
+        	padding: 20px;
+    	}
+    	.container {
+        	max-width: 800px;
+        	margin: 0 auto;
+        	background: white;
+        	padding: 30px;
+        	border-radius: 10px;
+        	box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    	}
+    	h1 { text-align: center; color: var(--primary-color); margin-bottom: 30px; }
+    	.footer { text-align: center; margin-top: 30px; font-size: 16px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+    	<h1>Negative Marking Calculator</h1>
+   	 
+    	<!-- SEO Friendly Article -->
+    	<article>
+        	<h2>What is Negative Marking Calculator?</h2>
+        	<p>Negative Marking Calculator is a tool that helps students calculate their final score after considering negative marking in competitive exams. Many exams follow a negative marking system where incorrect answers result in deducted marks. Our Negative Marking Calculator simplifies this process and gives accurate results instantly.</p>
+       	 
+        	<h2>Why Use Negative Marking Calculator?</h2>
+        	<p>Competitive exams like JEE, NEET, UPSC, SSC, and Banking exams have negative marking. If you answer incorrectly, a portion of marks gets deducted. Using the Negative Marking Calculator, students can:
+            	<ul>
+                	<li>Estimate their final score.</li>
+                	<li>Understand the impact of negative marking.</li>
+                	<li>Plan better strategies to improve scores.</li>
+            	</ul>
+        	</p>
+       	 
+        	<h2>How to Use Negative Marking Calculator?</h2>
+        	<p>Using the Negative Marking Calculator is very easy. Follow these steps:</p>
+        	<ol>
+            	<li>Enter the total number of questions.</li>
+            	<li>Input the maximum marks for the exam.</li>
+            	<li>Fill in the number of attempted questions.</li>
+            	<li>Enter the count of wrong answers.</li>
+            	<li>Select the negative marking ratio (e.g., 1/3, 1/4).</li>
+            	<li>Click on the 'Calculate' button to get your final score.</li>
+        	</ol>
+       	 
+        	<h2>Benefits of Negative Marking Calculator</h2>
+        	<p>Our Negative Marking Calculator is designed for students and aspirants preparing for competitive exams. It provides:
+            	<ul>
+                	<li>Quick and accurate results.</li>
+                	<li>Time-saving calculations.</li>
+                	<li>Better preparation strategy.</li>
+            	</ul>
+        	</p>
+    	</article>
+</html>
